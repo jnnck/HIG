@@ -1,0 +1,41 @@
+<div class="hero-unit">
+  <h1>Hulp in Gent</h1>
+  <p>Hulp in gent is de eindopdracht van Jannick Vandaele voor het vak New Media Design & Development III aan de Artevelde Hogeschool Gent</p>
+  <p>
+    <a href="<?php echo $this->baseUrl("index/contact"); ?>" class="btn btn-primary btn-large">
+      Meer info
+    </a>
+  </p>
+</div>
+
+<div class="row">
+    <div class="span8">
+        <h3>Nieuws</h3>
+        <?php if(!empty($this->news)){ foreach ($this->news as $niews): ?>
+            <blockquote>
+                <p>
+                    <h4> <?php echo $niews["title"];  ?></h4>
+                </p>
+                <p><?php echo $niews["content"] ?></p>
+                <small><?php echo $niews["username"] ?> op <cite title="Source Title"><?php echo date('d/m/Y', strtotime ($niews["addeddate"]));  ?></cite></small>
+              </blockquote>
+        <?php endforeach; }else{ echo "<i>er zijn nog geen commentaren voor deze apotheek. Wees de eerste om 1 toe te voegen!</i>"; }?>
+    </div>
+   
+    <div class="span4">
+        <h3>Laatste comments:</h3>
+        <?php if(!empty($this->comments)){ foreach ($this->comments as $comment): ?>
+            <blockquote>
+                <p>
+                    <?php $i = 0;  while($i < $comment["stars"]): ?><i class="icon-star icon-white"></i><?php $i++; endwhile; ?>
+                    <?php while($i < 5): ?><i class="icon-star-empty icon-white"></i><?php $i++; endwhile; ?>
+                    <?php if($this->role == "admin"):  ?> <a href="<?php echo $this->baseUrl("backoffice/comment/delete/id/"), $comment["id"]; ?>" class="pull-right"><i class="icon-trash icon-white"></i></a> <?php endif; ?>
+                    <a href="<?php echo $this->baseUrl("/places/"),$comment["data_type"],'/id/', $comment["data_id"]; ?>" class="pull-right"><i class="icon-zoom-in icon-white"></i></a>
+                </p>
+                <p><?php echo $comment["content"] ?></p>
+                <small><?php echo $comment["username"] ?> op <cite title="Source Title"><?php echo date('d/m/Y', strtotime ($comment["addeddate"]));  ?></cite></small>
+              </blockquote>
+        <?php endforeach; }else{ echo "<i>er zijn nog geen commentaren voor deze apotheek. Wees de eerste om 1 toe te voegen!</i>"; }?>
+    </div>
+</div>
+

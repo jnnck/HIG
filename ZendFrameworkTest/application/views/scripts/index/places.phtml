@@ -1,0 +1,217 @@
+<div class="row">
+    <div class="span8">
+        <div id="googlemap" style="height: 500px; border: 7px solid #c9234e"></div>
+    </div> 
+    <div class="span4">
+        <h3>Wat zoekt u?</h3>
+        <button class="btn btn-large btn-block btn-primary" type="button" id="showApotheken">Appotheken</button>
+        <button class="btn btn-large btn-block" type="button" id="showZiekenhuizen">Ziekenhuizen</button>   
+        <button class="btn btn-large btn-block" type="button" id="showHuisartsen">Huisartsen</button>   
+        <button class="btn btn-large btn-block" type="button" id="showHuisartsenwachtposten">Huisartsenwachtposten</button>   
+        <button class="btn btn-large btn-block" type="button" id="showDierenartsen">Dierenartsen</button>
+        
+        <h3 id="zoekh3">zoek een <span id="zoekeenwat">apotheek</span></h3>
+        <input type="text" data-provide="typeahead" class="typeahead" id="typeaheadapotheek">
+        <input type="text" data-provide="typeahead" class="typeahead" id="typeaheadziekenhuis">
+        <input type="text" data-provide="typeahead" class="typeahead" id="typeaheadhuisartsenwachtpost">
+        <input type="text" data-provide="typeahead" class="typeahead" id="typeaheadhuisarts">
+        <input type="text" data-provide="typeahead" class="typeahead" id="typeaheaddierenarts">
+        <button class="btn btn-block" type="button" id="typeaheadgo">Meer info</button>
+    </div>   
+</div>
+<script>
+var marker;
+var map;
+var _markers = [];
+var choices =  [];
+var marker_youarehere;
+var marker_cross;
+var apotheken = "http://localhost:8888/ZendFrameworkTest/public/index/getjson/type/apotheken";
+var ziekenhuizen = "http://localhost:8888/ZendFrameworkTest/public/index/getjson/type/ziekenhuizen";
+var dierenartsen = "http://localhost:8888/ZendFrameworkTest/public/index/getjson/type/dierenartsen";
+var huisartsen = "http://localhost:8888/ZendFrameworkTest/public/index/getjson/type/huisartsen";
+var huisartsenwachtposten = "http://localhost:8888/ZendFrameworkTest/public/index/getjson/type/huisartsenwachtposten";
+var current = "apotheek";
+
+function initialize() {
+    
+    marker_youarehere = new google.maps.MarkerImage('<?php echo $this->baseUrl("img/markeryah.png"); ?>',
+        new google.maps.Size(50, 70),
+        new google.maps.Point(0,0),
+        new google.maps.Point(25, 68),
+        new google.maps.Size(25, 35)
+    );
+    //PRE. DOG SHIT
+    marker_cross = new google.maps.MarkerImage('<?php echo $this->baseUrl("img/marker.png"); ?>',
+        new google.maps.Size(50, 70),
+        
+        new google.maps.Point(0,0),
+        new google.maps.Point(12.5, 34),
+        new google.maps.Size(25, 35)
+    );
+    
+  var mapOptions = {
+    zoom: 14,
+    mapTypeId: google.maps.MapTypeId.ROADMAP,
+    center: new google.maps.LatLng(51.054398, 3.725224)
+  };
+
+  map = new google.maps.Map(document.getElementById("googlemap"),
+      mapOptions);
+}
+//INFOWINDOW
+var infowindow = new google.maps.InfoWindow({
+    content: "hey"
+});
+
+function loadData(url){	
+    $.ajax({ 
+    type: 'GET', 
+    url: url, 
+    data: { get_param: 'value' }, 
+    dataType: 'json',
+    success: function (data) { 
+        
+            $.each(data, function(index, element) {
+                $.each(element, function(index, element) {       
+                    addMarkerOnGoogleMaps(element);
+            });
+            });
+       
+    }
+});
+}
+
+/* FUNCTION TO ADD MARKER BASED ON TITLE, LONG AND LAT */
+function addMarkerOnGoogleMaps(element){
+    if(typeof element.naam == 'undefined'){element.naam = element.naam_wacht;} 
+    if(typeof element.adres == 'undefined'){element.adres = element.straat+" "+element.nr;}
+    choices.push(element.naam+" ("+element.id+")");
+    marker = new google.maps.Marker({
+        map:map,
+        title: element.naam,
+        icon: marker_cross,
+        position: new google.maps.LatLng(element.lat, element.long),
+        content: "<a href='<?php echo $this->baseUrl("places/"); ?>"+current+"/id/"+element.id+"'><h4>"+element.naam+"</h4></a>"+element.adres+"<br />"+element.postcode+" "+element.gemeente
+    });
+
+    google.maps.event.addListener(marker, 'click', function() {
+        infowindow.setContent(this.content);
+        infowindow.open(map,this);
+    });
+    _markers.push(marker);
+}
+
+/* FUNCTION VISUALIZE HONDENTOILETTEN */
+function visualizeHondenToiletten(data){
+	var obj = jQuery.parseJSON(data);
+        
+}
+
+function toggleBounce() {
+
+  if (marker.getAnimation() != null) {
+    marker.setAnimation(null);
+  } else {
+    marker.setAnimation(google.maps.Animation.BOUNCE);
+  }
+}
+
+function clearOverlays() {
+  for (var i = 0; i < _markers.length; i++ ) {
+    _markers[i].setMap(null);
+  }
+}
+
+$(document).ready(function () {
+    initialize();
+    loadData(apotheken);
+    $('.typeahead').hide();
+    $('#typeaheadapotheker').typeahead({
+        source: choices
+    }).show()
+    
+    $("#showZiekenhuizen").click(function() {
+        current = "ziekenhuis";
+        $('#zoekeenwat').html(current);
+        $(".btn-primary").removeClass("btn-primary");
+        $(this).addClass("btn-primary");
+        clearOverlays();
+        choices = []
+        loadData(ziekenhuizen);
+        $('.typeahead').hide();
+        $('#typeaheadziekenhuis').typeahead({
+            source: choices
+        }).show()
+        
+    });
+    
+    $("#showApotheken").click(function() {
+        $(".btn-primary").removeClass("btn-primary");
+        current = "apotheek";
+        $('#zoekeenwat').html(current);
+        $(this).addClass("btn-primary");
+        clearOverlays();
+        choices = []
+        loadData(apotheken);
+        $('.typeahead').hide();
+        $('#typeaheadapotheek').typeahead({
+            source: choices
+        }).show()
+    });
+    
+    $("#showHuisartsen").click(function() {
+        $(".btn-primary").removeClass("btn-primary");
+        current = "huisarts";
+        $('#zoekeenwat').html(current);
+        $(this).addClass("btn-primary");
+        clearOverlays();
+        choices = []
+        loadData(huisartsen);
+        $('.typeahead').hide();
+        $('#typeaheadhuisarts').typeahead({
+            source: choices
+        }).show()
+    });
+    
+    $("#showHuisartsenwachtposten").click(function() {
+        current = "huisartsenwachtpost";
+        $('#zoekeenwat').html(current);
+        $(".btn-primary").removeClass("btn-primary");
+        $(this).addClass("btn-primary");
+        clearOverlays();
+        choices = []
+        loadData(huisartsenwachtposten);
+        $('.typeahead').hide();
+        $('#typeaheadhuisartsenwachtpost').typeahead({
+            source: choices
+        }).show()
+    });
+    
+    $("#showDierenartsen").click(function() {
+        $(".btn-primary").removeClass("btn-primary");
+        current = "dierenarts";
+        $('#zoekeenwat').html(current);
+        $(this).addClass("btn-primary");
+        clearOverlays();
+        choices = []
+        loadData(dierenartsen);
+        $('.typeahead').hide();
+        $('#typeaheaddierenarts').typeahead({
+            source: choices
+        }).show()
+    });
+    $("#typeaheadgo").click(function() {
+        if($("#typeahead"+current).val() != ''){
+            var idpart = $("#typeahead"+current).val().split("(");
+            var id = idpart[1].replace(')', '');
+            alert(id);
+            var url = "<?php echo $this->baseUrl("places/"); ?>"+current+"/id/"+id;
+            alert(url);
+            window.location = url;
+        }
+    });
+});
+
+</script>
+

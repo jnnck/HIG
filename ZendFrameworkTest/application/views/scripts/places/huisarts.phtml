@@ -1,0 +1,94 @@
+<?php echo $this->message; ?>
+<div class="row">
+    
+    <div class="span4">
+        <div id="googlemap" style="height: 500px; border: 7px solid #c9234e"></div>
+    </div> 
+    <div class="span4">
+        <h3><?php echo $this->huisarts["naam"]; ?></h3>
+        <h4>Adres</h4>
+        <?php echo $this->huisarts["naam"]; ?> <?php echo $this->huisarts["voornaam"]; ?><br />
+        <?php echo $this->huisarts["adres"]; ?><br />
+        <?php echo $this->huisarts["postcode"]; ?> <?php echo $this->huisarts["gemeente"]; ?>
+        <br /><br /><br />
+        <h4>Soort praktijk:</h4>
+        <?php echo $this->huisarts["praktijk"].' ('.$this->huisarts["geslacht"].')';?>
+        <br /><br /><br />
+        <h4>Schrijf een review</h4>
+        <?php if(!empty($this->form)){ echo $this->form; } else { echo "Om een commentaar achter te laten dient u ingelogd te zijn."; }?>
+        <span class='st_sharethis_large' displayText='ShareThis'></span>
+<span class='st_facebook_large' displayText='Facebook'></span>
+<span class='st_twitter_large' displayText='Tweet'></span>
+<span class='st_pinterest_large' displayText='Pinterest'></span>
+<span class='st_googleplus_large' displayText='Google +'></span>
+<span class='st_linkedin_large' displayText='LinkedIn'></span>
+<span class='st_delicious_large' displayText='Delicious'></span>
+    </div> 
+    <div class="span4">
+        <h3>&nbsp;</h3>
+        <h4>Comments</h4>
+        <?php if(!empty($this->comments)){ foreach ($this->comments as $comment): ?>
+            <blockquote>
+                <p>
+                    <?php $i = 0;  while($i < $comment["stars"]): ?><i class="icon-star icon-white"></i><?php $i++; endwhile; ?>
+                    <?php while($i < 5): ?><i class="icon-star-empty icon-white"></i><?php $i++; endwhile; ?>
+                    <?php if($this->role == "admin"):  ?> <a href="<?php echo $this->baseUrl("backoffice/comment/delete/id/"), $comment["id"]; ?>" class="pull-right"><i class="icon-trash icon-white"></i></a> <?php endif; ?>
+                </p>
+                <p><?php echo $comment["content"] ?></p>
+                <small><?php echo $comment["username"] ?> op <cite title="Source Title"><?php echo date('d/m/Y', strtotime ($comment["addeddate"]));  ?></cite></small>
+              </blockquote>
+        <?php endforeach; }else{ echo "<i>er zijn nog geen commentaren voor deze huisarts. Wees de eerste om 1 toe te voegen!</i>"; }?>
+        
+       
+    </div>   
+</div>
+
+<script>
+var marker;
+var map;
+var marker_youarehere;
+var marker_cross;
+
+function initialize() {
+    
+    marker_youarehere = new google.maps.MarkerImage('<?php echo $this->baseUrl("img/markeryah.png"); ?>',
+        new google.maps.Size(50, 70),
+        new google.maps.Point(0,0),
+        new google.maps.Point(25, 68),
+        new google.maps.Size(25, 35)
+    );
+    //PRE. DOG SHIT
+    marker_cross = new google.maps.MarkerImage('<?php echo $this->baseUrl("img/marker.png"); ?>',
+        new google.maps.Size(50, 70),
+        
+        new google.maps.Point(0,0),
+        new google.maps.Point(12.5, 34),
+        new google.maps.Size(25, 35)
+    );
+    
+  var mapOptions = {
+    zoom: 16,
+    mapTypeId: google.maps.MapTypeId.ROADMAP,
+    center: new google.maps.LatLng(<?php echo $this->huisarts["lat"] ?>, <?php echo $this->huisarts["long"] ?>)
+  };
+
+  map = new google.maps.Map(document.getElementById("googlemap"),
+      mapOptions);
+      
+      marker = new google.maps.Marker({
+        map:map,
+        title: "<?php echo $this->huisarts["naam"] ?>",
+        icon: marker_cross,
+        position: new google.maps.LatLng(<?php echo $this->huisarts["lat"] ?>, <?php echo $this->huisarts["long"] ?>)
+    });
+}
+
+
+
+
+$(document).ready(function () {
+    initialize();
+   
+});
+
+</script>

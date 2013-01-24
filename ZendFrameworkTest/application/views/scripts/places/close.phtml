@@ -1,0 +1,218 @@
+<div class="row">
+    <div class="span6">
+        <div id="googlemap" style="height: 500px; border: 7px solid #c9234e"></div>
+    </div> 
+    <div class="span6">
+        <table class="table">
+            <thead>
+                <tr>
+                    <td><h4>Naam</h4></td>
+                    <td><h4>Adres</h4></td>
+                    <td><h4>Afstand</h4></td>
+                </tr>
+            </thead>
+            <tbody id="diensten">
+            </tbody>        
+        </table>
+    </div>   
+</div>
+<script>
+var marker;
+var map;
+var cycle = new google.maps.MarkerImage();
+var _markers = [];
+var choices =  [];
+var options =[];
+var markeroptions = []
+var marker_youarehere;
+var marker_cross;
+var apotheken = "http://localhost:8888/ZendFrameworkTest/public/index/getjson/type/apotheken";
+var ziekenhuizen = "http://localhost:8888/ZendFrameworkTest/public/index/getjson/type/ziekenhuizen";
+var dierenartsen = "http://localhost:8888/ZendFrameworkTest/public/index/getjson/type/dierenartsen";
+var huisartsen = "http://localhost:8888/ZendFrameworkTest/public/index/getjson/type/huisartsen";
+var huisartsenwachtposten = "http://localhost:8888/ZendFrameworkTest/public/index/getjson/type/huisartsenwachtposten";
+var infowindow = new google.maps.InfoWindow();
+
+
+function initialize() {
+    
+    marker_orange = new google.maps.MarkerImage('<?php echo $this->baseUrl("img/markeroranje.png"); ?>',
+        new google.maps.Size(50, 70),
+        new google.maps.Point(0,0),
+        new google.maps.Point(12, 32),
+        new google.maps.Size(25, 35)
+    );
+        
+    marker_blue = new google.maps.MarkerImage('<?php echo $this->baseUrl("img/markerblauw.png"); ?>',
+        new google.maps.Size(50, 70),
+        new google.maps.Point(0,0),
+        new google.maps.Point(12, 32),
+        new google.maps.Size(25, 35)
+    );
+        
+    marker_green = new google.maps.MarkerImage('<?php echo $this->baseUrl("img/markergroen.png"); ?>',
+        new google.maps.Size(50, 70),
+        new google.maps.Point(0,0),
+        new google.maps.Point(12, 32),
+        new google.maps.Size(25, 35)
+    );
+        
+    marker_purple = new google.maps.MarkerImage('<?php echo $this->baseUrl("img/markerpaars.png"); ?>',
+        new google.maps.Size(50, 70),
+        new google.maps.Point(0,0),
+        new google.maps.Point(12, 32),
+        new google.maps.Size(25, 35)
+    );
+        
+    marker_red = new google.maps.MarkerImage('<?php echo $this->baseUrl("img/markerrood.png"); ?>',
+        new google.maps.Size(50, 70),
+        new google.maps.Point(0,0),
+        new google.maps.Point(12, 32),
+        new google.maps.Size(25, 35)
+    );
+        
+    marker_cross = new google.maps.MarkerImage('<?php echo $this->baseUrl("img/marker.png"); ?>',
+        new google.maps.Size(50, 70),  
+        new google.maps.Point(0,0),
+        new google.maps.Point(12.5, 34),
+        new google.maps.Size(25, 35)
+    );
+       
+    //LINK OPTIONS TO MARKERS
+    options.push("apotheken");             markeroptions.push(marker_green);
+    options.push("ziekenhuizen");          markeroptions.push(marker_red);
+    options.push("dierenartsen");          markeroptions.push(marker_orange);
+    options.push("huisartsen");            markeroptions.push(marker_blue);
+    options.push("huisartsenwachtposten"); markeroptions.push(marker_purple);
+    
+  var mapOptions = {
+    zoom: 14,
+    mapTypeId: google.maps.MapTypeId.ROADMAP,
+    center: new google.maps.LatLng(51.054398, 3.725224)
+  };
+
+  map = new google.maps.Map(document.getElementById("googlemap"), mapOptions);
+  google.maps.event.addListenerOnce(map, 'bounds_changed', function(){
+		getGeoLocation();
+	});
+}
+
+function getGeoLocation(){
+	if(Modernizr.geolocation){
+		navigator.geolocation.getCurrentPosition(geoSuccess, geoError, { maximumAge: 60000, timeout: 10000, enableHighAccuracy: true});
+	}else{
+		geoFallBack();
+	}
+}
+
+function geoSuccess(position){
+	var coordinates = position.coords;
+	_currentGeoPositionGoogleMapMarker = new google.maps.Marker({
+		position: new google.maps.LatLng(coordinates.latitude, coordinates.longitude),
+		map:map,
+		title: "My Current Position",
+		icon: marker_cross
+	})
+	map.setCenter(_currentGeoPositionGoogleMapMarker.getPosition());
+        loadData(coordinates);
+}
+function geoError(error){
+	switch(error.code){
+		//TIMEOUT
+		case 3:
+			navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
+			break;
+		//POSITION UNAVAILABLE
+		case 2:
+			navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
+			break;
+		//PERMISSION DENIED --> FALLBACK
+		case 1:
+			geoFallBack();
+			break;
+		default:
+			navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
+			break;
+	};
+}
+function geoFallBack(){
+
+}
+
+function loadData(coordinates){
+    for (var i=0;i<options.length;i++)
+    {
+        var url = "http://localhost:8888/ZendFrameworkTest/public/data/close/type/"+options[i]+"/lat/"+coordinates.latitude+"/long/"+coordinates.longitude;
+        cycle = markeroptions[i];
+        $.ajax({ 
+            type: 'GET', 
+            url: url, 
+            dataType: 'json',
+            success: function (data) { 
+                $.each(data, function(index, element) {
+                    var markerstyle = new google.maps.MarkerImage();
+                    var color;
+                    var current;
+                    switch(index)
+                        {
+                        case "apotheken":
+                          markerstyle = marker_green;
+                          color = "#cae3ae";
+                          current = "apotheek";
+                          break;
+                        case "ziekenhuizen":
+                          markerstyle = marker_red;
+                          color = "#ebaeae";
+                          current = "ziekenhuis";
+                          break;
+                        case "dierenartsen":
+                          markerstyle = marker_orange;
+                          color = "#fbdbb1";
+                          current = "dierenarts";
+                          break;
+                        case "huisartsen":
+                          markerstyle = marker_blue;
+                          color = "#9cc8e8";
+                          current = "huisarts";
+                          break;
+                        case "huisartsenwachtposten":
+                          markerstyle = marker_purple;
+                          color = "#e2a9d7";
+                          current = "huisartsenwachtpost";
+                          break;    
+                        default:
+                          markerstyle = marker_orange;
+                        }
+                    $("#diensten").append("<tr><td  colspan='3' style='text-transform:uppercase; color: #33373d; background-color: "+color+";'><h5 style='width:100%; text-align:center;'>"+index+"</h5></td></tr>");
+                    $.each(element, function(index, element) {       
+                    if(typeof element.naam == 'undefined'){element.naam = element.naam_wacht;} 
+                    if(typeof element.adres == 'undefined'){element.adres = element.straat+"&nbsp"+element.nr;}
+                    if(typeof element.huisnr != 'undefined'){element.adres = element.adres +"&nbsp"+element.huisnr;}
+                    marker = new google.maps.Marker({
+                        map:map,   
+                        title: element.naam,
+                        icon: markerstyle,
+                        content: "<a href='<?php echo $this->baseUrl("places/"); ?>"+current+"/id/"+element.id+"'><h4>"+element.naam+"</h4></a>"+element.adres+"<br />"+element.postcode+" "+element.gemeente,
+                        position: new google.maps.LatLng(element.lat, element.long)
+                    });
+                    google.maps.event.addListener(marker, 'click', function() {
+                        infowindow.setContent(this.content);
+                        infowindow.open(map,this);
+                    });
+                    _markers.push(marker);
+                    
+                    $("#diensten").append("<tr><td><a href='<?php echo $this->baseUrl("places/"); ?>"+current+"/id/"+element.id+"'>"+element.naam+"</a></td><td>"+element.adres+"<br />"+element.postcode+" "+element.gemeente+"</td><td>"+element.afstand.toFixed(1)+"Km</td></tr>");
+                    
+                });
+            });
+
+            }
+        });
+        }
+    }
+    
+$(document).ready(function () {
+    initialize();
+});
+
+</script>

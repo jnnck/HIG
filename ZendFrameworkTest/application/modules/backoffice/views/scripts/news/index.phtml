@@ -1,0 +1,21 @@
+ <?php echo $this->message; ?>
+<div class="row">
+    <div class="span6">
+        <h3>Nieuws</h3>
+        <?php if(!empty($this->news)){ foreach ($this->news as $niews): ?>
+            <blockquote>
+                <p>
+                    <h4> <?php echo $niews["title"];  ?></h4>
+                    <a href="<?php echo $this->baseUrl("backoffice/news/delete/id/"), $niews["id"]; ?>" class="pull-right"><i class="icon-trash icon-white"></i></a>
+                </p>
+                <p><?php echo $niews["content"] ?></p>
+                <small><?php echo $niews["username"] ?> op <cite title="Source Title"><?php echo date('d/m/Y', strtotime ($niews["addeddate"]));  ?></cite></small>
+              </blockquote>
+        <?php endforeach; }else{ echo "<i>er zijn nog geen commentaren voor deze apotheek. Wees de eerste om 1 toe te voegen!</i>"; }?>
+    </div>
+    
+    <div class="span6">
+        <h3>Voeg nieuws toe:</h3>
+        <?php echo $this->form; ?>
+    </div>
+</div>

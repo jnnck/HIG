@@ -1,0 +1,94 @@
+Home:
+  label: Home
+  Module: default
+  controller: index
+  action: index
+  resource: IndexController
+  privilege: indexAction 
+Places:
+  label: Alle diensten
+  module: default
+  controller: places
+  action: index
+  resource: PlacesController
+  privilege: indexAction
+Close:
+  label: Close to Me
+  module: default
+  controller: places
+  action: close
+  resource: PlacesController
+  privilege: closeAction
+Info:
+  label: Contact
+  module: default
+  controller: index
+  action: contact
+  resource: IndexController
+  privilege: contactAction
+Account:
+  label: Account
+  module: default
+  controller: account
+  action: index
+  resource: AccountController
+  privilege: indexAction
+  pages:
+      loginAction:
+        label: Login
+        module: default
+        controller: account
+        action: login
+        resource: AccountController
+        privilege: loginAction
+      logoutAction:
+        label: Logout
+        module: default
+        controller: account
+        action: logout
+        resource: AccountController
+        privilege: logoutAction
+      registerAction:
+        label: Register
+        module: default
+        controller: account
+        action: register
+        resource: AccountController
+        privilege: registerAction
+      editAction:
+        label: Edit
+        module: default
+        controller: account
+        action: edit
+        resource: AccountController
+        privilege: editAction
+Admin:
+  label: Admin
+  module: backoffice
+  controller: index
+  action: index
+  module: backoffice
+  resource: Backoffice_IndexController
+  privilege: indexAction
+  pages:
+      users:
+        label: Users
+        module: backoffice
+        controller: users
+        action: index
+        resource: Backoffice_UsersController
+        privilege: indexAction
+      data:
+        label: Data
+        module: backoffice
+        controller: data
+        action: index
+        resource: Backoffice_DataController
+        privilege: indexAction
+      news:
+        label: Nieuws
+        module: backoffice
+        controller: news
+        action: index
+        resource: Backoffice_NewsController
+        privilege: indexAction

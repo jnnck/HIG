@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+           <?php
+            echo $this->headMeta()  , PHP_EOL,
+                 $this->headTitle() , PHP_EOL,
+                 $this->headLink()  , PHP_EOL,
+                 $this->headScript(), PHP_EOL;
+            ?>
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
+		<div id="wrapper">
+        <div class="navbar navbar-fixed-top">
+		  <div class="navbar-inner">
+			<div class="container">
+			  <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			  </a>
+			  <a class="brand" href="#"><img src="<?php echo $this->baseUrl("img/smalllogo.png"); ?>" alt="logo"></a>
+			  <div class="nav-collapse pull-right">
+                              <?php echo $this->navigation()->menu()->renderMenu(); ?>
+			  </div> 
+			</div> 
+		  </div>
+		</div>
+				<div id="push2"></div>
+
+		<div class="container">
+			
+			<?php echo $this->layout()->content; ?>
+			
+		</div>
+		<div id="push"></div>
+		</div>
+		<div id="footer">
+			<div class="container">
+				<div class="row">
+					<div class="span8 footerpart visible-desktop">
+                                            <h4>Social Feed</h4>
+                                            <div id="social-stream"></div>
+                                        </div>
+					<div class="span4 footerpart visible-desktop pull-right">
+                                            <h4 style="text-align:right">Special thanks to</h4>
+                                            <div style="text-align:right; margin:10px 0;">
+                                            <img  style="text-align:right; margin:10px 0;" src="<?php echo $this->baseUrl("img/appsforghent.png"); ?>" /><br/>
+                                             <img style="text-align:right; margin:10px 0;" src="<?php echo $this->baseUrl("img/datatank.png"); ?>" /><br/>
+                                             <img style="text-align:right; margin:10px 0;" src="<?php echo $this->baseUrl("img/artevelde.png"); ?>" /><br/>
+                                            </div>
+                                        </div>
+				</div>
+				<div class="row">
+					<div class="span12" id="copyright">
+						Webdesign and development by Jannick Vandaele - &copy;&nbsp;2012&#8209;2013
+					</div>
+				</div>
+			</div>
+		</div>
+                <?php
+                echo $this->inlineScript()   , PHP_EOL;
+                ?>
+                <script>
+                    $(document).ready(function () {
+                        $('#social-stream').dcSocialStream({
+                                    feeds: {
+                                            facebook: {
+                                                    id: '309796729141875'
+                                            }
+                                    },
+                                    max:'limit',
+                                    iconPath: '<?php echo $this->baseUrl("images/dcsns-dark/"); ?>',
+                                    imagePath: '<?php echo $this->baseUrl("images/dcsns-light-1/"); ?>',
+                                    height: 200,
+                                    controls: false
+
+                        });
+                    });
+                </script>
+                <script type="text/javascript">var switchTo5x=false;</script>
+<script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
+<script type="text/javascript">stLight.options({publisher: "d0da6de0-cba8-488f-b027-38b114f016fb"});</script>
+    </body>
+</html>

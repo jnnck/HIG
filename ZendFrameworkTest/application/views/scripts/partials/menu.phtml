@@ -1,0 +1,43 @@
+<?php 
+echo '<ul class="nav">';
+    // loop root level
+    foreach ($this->container as $page) {
+        
+        // check if it is active (not recursive)
+        $isActive = $page->isActive(false);
+        
+        //href ophalen voor het opstellen van de link
+        $href = $page->getHref();
+        
+        //label ophalen voor het opstellen ven de link
+        $label = $page->getLabel();
+        
+        //kijken of er submenu's aankomen
+        if (!empty($page->pages)){
+            //zoja de dropdownlist classes en data-toggle toevoegen aan alle elementen
+            $liClass = $isActive ? ' class="active dropdown"' : 'class="dropdown"';
+            echo '<li ' . $liClass . '>' . "<a href='".$href."' class='dropdown-toggle' data-toggle='dropdown'>".$label." <b class='caret'></b></a>" , PHP_EOL;
+        } else {
+            //zoniet hoeven er geen speciale classes toegevoegd te worden behalve de active als het de huidige pagina is
+            $liClass = $isActive ? ' class="active"' : '';
+            echo '<li ' . $liClass . '>' . $this->menu()->htmlify($page). '</li>' , PHP_EOL;
+        }
+        
+        // loop het 2de leve/submenu
+        $i = 0;
+        foreach ($page as $page) {
+            $i ++;
+            //bij de eerste keer voegen we de ul to met de juiste class
+            if ($i == 1) {echo "<ul class='dropdown-menu'>", PHP_EOL;}
+            //ook hier checken op active
+            $isActive = $page->isActive(true);
+            $liClass = $isActive ? ' class="active"' : '';
+            echo '<li ' . $liClass . '>' . $this->menu()->htmlify($page) . '</li>', PHP_EOL;
+        }
+        //als er een submenu is toegevoegd moet dit ook afgesloten worden
+        if ($i > 0) {echo '</ul>', PHP_EOL;}
+        //menu item afsluiten uiteraard
+        echo '</li>', PHP_EOL;
+    }
+    echo '</ul>';
+?>

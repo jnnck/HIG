@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hulp in Gent</title>
+<link rel="stylesheet" href="themes/hulpingent.min.css" />
+<link rel="stylesheet" href="css/main.css" />
+<link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.0/jquery.mobile.structure-1.2.0.min.css" />
+<script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
+<script src="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.js"></script>
+<script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyCBrey8ryXEytozQb_zYU-SWpe6A25F2FA&sensor=true"></script>
+<script src="js/vendor/modernizr-2.6.2.min.js"></script>
+<script src="js/vendor/jqm.page.params.js"></script>
+<script src="js/main.js"></script>
+
+</head>
+<body>
+<div data-role="page" data-theme="a" id="home">
+	<div data-role="header" data-position="inline" data-theme="a">
+	
+		<h1>Hulp in Gent</h1>
+	</div>
+	<div data-role="content" data-theme="a">
+		<img src="img/logo.png" id="logo" alt="logo">
+		
+	</div>
+	<div data-role="footer" data-id="foo1" data-position="fixed">
+		<div data-role="navbar">
+			<ul>
+				<li><a href="#ctm" data-transition="slide">Close To Me</a></li>
+				<li><a href="#diensten" data-transition="slide">Over deze app</a></li>
+			</ul>
+		</div>
+		<!-- /navbar --> 
+	</div>
+	<!-- /footer --> 
+</div>
+<div data-role="page" data-theme="a" id="ctm">
+	<div data-role="header" data-position="inline" data-theme="a">
+		<a href="#home" data-icon="home"  data-transition="slide" data-direction="reverse">Home</a>
+		<h1>Hulp in Gent - Close to me</h1>
+	</div>
+	<div data-role="content" data-theme="a">
+		<div id="googlemap" style="height: 150px; border: 7px solid #c9234e"></div>
+		<br /><br />
+		<ul data-role="listview" id="lijst">
+				
+			</ul>
+	</div>
+	<div data-role="footer" data-id="foo1" data-position="fixed">
+		<div data-role="navbar">
+			<ul>
+				<li><a href="#ctm" class="ui-btn-active ui-state-persist">Close To Me</a></li>
+				<li><a href="#diensten" data-transition="slide">Over deze app</a></li>
+			</ul>
+		</div>
+		<!-- /navbar --> 
+	</div>
+	<!-- /footer --> 
+</div>
+<div data-role="page" data-theme="a" id="diensten">
+	<div data-role="header" data-position="inline" data-theme="a">
+		<a href="#home" data-icon="home"  data-transition="slide" data-direction="reverse">Home</a>
+		<h1>Hulp in Gent - Over</h1>
+	</div>
+	<div data-role="content" data-theme="a">
+		<h1>Over deze app</h1>
+		<p>Deze app is gemaakt door Jannick Vandaele, student Grafische en Digitale Media op de Artevelde Hogeschool te Gent.</p>
+		<p>Alle data waarvan gebruik wordt gemaakt is afkomstig van "The Datatank", de api die gebruikt wordt is deze van "Apps for Ghent"</p>
+	</div>
+	<div data-role="footer" data-id="foo1" data-position="fixed">
+		<div data-role="navbar">
+			<ul>
+				<li><a href="#ctm" data-transition="slide" data-direction="reverse">Close To Me</a></li>
+				<li><a href="#diensten" class="ui-btn-active ui-state-persist">Over deze app</a></li>
+			</ul>
+		</div>
+		<!-- /navbar --> 
+	</div>
+	<!-- /footer --> 
+</div>
+
+
+
+</body>
+</html>
